@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Loan Calculator</title>
+    <style type="text/css">
+
+    </style>
+    <script type="text/javascript">
+    "use strict";
+    function calculate(){
+        var amount = document.getElementById("amount");
+        var apr = document.getElementById("apr");
+        var years = documeng.getElementById("years");
+        var zipcode = document.getElementById("zipcode");
+        var payment = document.getElementById("payment");
+        var total = document.getElementById("total");
+        var totalinterest = document.getElementById("totalinterest");
+
+        var principal = parseFloat(amount.value);
+        var interest = parseFloat(apr.value)/100/12;
+        var payments =  parseFloat(years.value) * 12;
+
+        var x = Math.pow(1+interest,payments);
+        var monthly = (principal*x*interest)/(x-1);
+
+        if(isFinite(monthly)) {
+            payment.innerHTML = monthly.toFixed(2);
+            total.innerHTML = (monthly*payments).toFixed(2);
+            totalinterest.innerHTML = ((monthly*payments)-principal).toFixed(2);
+
+            save(amount.value,apr.value,years.value,zipcode.value);
+            try{
+                getLenders(amount.value,apr.value,years.value,zipcode.value);
+            }
+            catch(e){ }
+            chart(principal,interest,monthly,payments);
+        }else{
+            payment.innerHTML = "";
+            total.innerHTML = "";
+            totalinterest.innerHTML = "";
+            chart();
+        }
+
+    }
+     /*
+     *这里的脚本定义了calculate（）函数，在HTML代码中绑定事件处理程序时会调用它
+     *这个函数从input元素中读取数据，计算贷款赔付信息，并将结果保存在span元素中
+     * 同样，这里还保存了用户数据，展示了放贷人连接并绘制出了图表
+     */
+    </script>
+</head>
+<body>
+  <!--
+    这是一个HTML表格，其中包含<input>元素可以用来输入数据。
+    程序将在<span>元素中显示计算结果，这些元素都具有类似"interest"和"years"的id
+    这些id将在表格下面的javascript代码中用到。我们注意到，一些
+    input元素定义了"onchange"或"onclick"的事件处理程序，以便用户在输入数据或者点击inputs
+    时执行指定的Javascript代码段
+  -->
+<table>
+    <tr><th>Enter Loan Data:</th>
+        <td></td>
+        <th>Loan Balance,Cumulative Equity, and Interest Payments</th></tr>
+    <tr><td>Amount of the Loan ($):</td>
+        <td><input id="amount" onchange="calculate();"/></td>
+        <td rowspan=8>
+        <canvas id="graph" width="400" height="250"></canvas></td></tr>
+    <tr><td>Annual interest (%):</td>
+        <td><input id="apr" onchange="calculate();"/></td></tr>
+    <tr><td>Repayment period (years):</td>
+        <td><input id="years" onchange="calculate();"/></td></tr>
+    <tr><td>Zipcode (to find lenders):</td>
+        <td><input id="zipcode" onchange="calculate();"/></td></tr>
+    <tr><th>Approximate Payments:</th>
+        <td><button onclick="calculate();">Calculate</button></td></tr>
+    <tr><td>Monthly Payment:</td>
+        <td>$<span class="output" id="payment"></span></td></tr>
+    <tr><td>Total payment:</td>
+        <td>$<span class="output" id="total"></span></td></tr>
+    <tr><td>Total interest:</td>
+        <td>$<span class="output" id="totalinterest"></span></td></tr>
+    <tr><th>Sponsors:</th><td colspan=2>
+        Apply for your loan with one of these fine lenders:
+        <div id="lenders"></div></td></tr>
+</table>
+</body>
+</html>

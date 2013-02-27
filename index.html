@@ -1,74 +1,88 @@
+
 <!DOCTYPE html>
 <html>
+<head>
+    <title>JavaScript Loan Calculator</title>
+    <style type="text/css">
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Loan-calculator : The example in Javascript for Loan Calculator" />
+    </style>
+    <script type="text/javascript">
+    "use strict";
+    function calculate(){
+        var amount = document.getElementById("amount");
+        var apr = document.getElementById("apr");
+        var years = documeng.getElementById("years");
+        var zipcode = document.getElementById("zipcode");
+        var payment = document.getElementById("payment");
+        var total = document.getElementById("total");
+        var totalinterest = document.getElementById("totalinterest");
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+        var principal = parseFloat(amount.value);
+        var interest = parseFloat(apr.value)/100/12;
+        var payments =  parseFloat(years.value) * 12;
 
-    <title>Loan-calculator</title>
-  </head>
+        var x = Math.pow(1+interest,payments);
+        var monthly = (principal*x*interest)/(x-1);
 
-  <body>
+        if(isFinite(monthly)) {
+            payment.innerHTML = monthly.toFixed(2);
+            total.innerHTML = (monthly*payments).toFixed(2);
+            totalinterest.innerHTML = ((monthly*payments)-principal).toFixed(2);
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/duanmengna/Loan-calculator">View on GitHub</a>
+            save(amount.value,apr.value,years.value,zipcode.value);
+            try{
+                getLenders(amount.value,apr.value,years.value,zipcode.value);
+            }
+            catch(e){ }
+            chart(principal,interest,monthly,payments);
+        }else{
+            payment.innerHTML = "";
+            total.innerHTML = "";
+            totalinterest.innerHTML = "";
+            chart();
+        }
 
-          <h1 id="project_title">Loan-calculator</h1>
-          <h2 id="project_tagline">The example in Javascript for Loan Calculator</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/duanmengna/Loan-calculator/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/duanmengna/Loan-calculator/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Loan-calculator maintained by <a href="https://github.com/duanmengna">duanmengna</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
-  </body>
+    }
+     /*
+     *这里的脚本定义了calculate（）函数，在HTML代码中绑定事件处理程序时会调用它
+     *这个函数从input元素中读取数据，计算贷款赔付信息，并将结果保存在span元素中
+     * 同样，这里还保存了用户数据，展示了放贷人连接并绘制出了图表
+     */
+    </script>
+</head>
+<body>
+  <!--
+    这是一个HTML表格，其中包含<input>元素可以用来输入数据。
+    程序将在<span>元素中显示计算结果，这些元素都具有类似"interest"和"years"的id
+    这些id将在表格下面的javascript代码中用到。我们注意到，一些
+    input元素定义了"onchange"或"onclick"的事件处理程序，以便用户在输入数据或者点击inputs
+    时执行指定的Javascript代码段
+  -->
+<table>
+    <tr><th>Enter Loan Data:</th>
+        <td></td>
+        <th>Loan Balance,Cumulative Equity, and Interest Payments</th></tr>
+    <tr><td>Amount of the Loan ($):</td>
+        <td><input id="amount" onchange="calculate();"/></td>
+        <td rowspan=8>
+        <canvas id="graph" width="400" height="250"></canvas></td></tr>
+    <tr><td>Annual interest (%):</td>
+        <td><input id="apr" onchange="calculate();"/></td></tr>
+    <tr><td>Repayment period (years):</td>
+        <td><input id="years" onchange="calculate();"/></td></tr>
+    <tr><td>Zipcode (to find lenders):</td>
+        <td><input id="zipcode" onchange="calculate();"/></td></tr>
+    <tr><th>Approximate Payments:</th>
+        <td><button onclick="calculate();">Calculate</button></td></tr>
+    <tr><td>Monthly Payment:</td>
+        <td>$<span class="output" id="payment"></span></td></tr>
+    <tr><td>Total payment:</td>
+        <td>$<span class="output" id="total"></span></td></tr>
+    <tr><td>Total interest:</td>
+        <td>$<span class="output" id="totalinterest"></span></td></tr>
+    <tr><th>Sponsors:</th><td colspan=2>
+        Apply for your loan with one of these fine lenders:
+        <div id="lenders"></div></td></tr>
+</table>
+</body>
 </html>
